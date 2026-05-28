@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../img/hello.jpeg">
+    <title>Binary Portal</title>
+    <link rel="stylesheet" href="./search.css">
+    <script src="./words.js"></script>
+    <script src="./match.js"></script>
+</head>
+<body>
+    <center><img src="hello.jpeg" id="logo"></center>
+    <h1 id="product">Binary Portal</h1>
+    <input type="text" autofocus placeholder="Search aaron...">
+    <br><br>
+    <a href="match.html" id="mnf">About no match found or search match</a>
+    <ul></ul>
+
+    <script>
+        let input = document.querySelector('input');
+        input.addEventListener('keyup', function(e){
+            let html = '';  
+            if(input.value){
+                for(word of WORDS){
+                    if(word.startsWith(input.value)){
+                        html += `<a href="${word}.html"><li>${word}</li></a>`; 
+                    }
+                }
+            }
+            else{
+                html += '<li>Match not found!</li>';
+            }
+            document.querySelector('ul').innerHTML = html;
+            e.preventDefault();
+        });
+    </script>
+</body>
+</html>
