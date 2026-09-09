@@ -54,40 +54,7 @@
         }
     </script>
     
-    <!-- Embedded Dynamic Live Search Script Mechanics -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const searchInput = document.getElementById('input');
-            const suggestionsPanel = document.getElementById('suggestionsPanel');
-            const suggestionsList = document.getElementById('suggestionsList');
-
-            searchInput.addEventListener('keyup', function() {
-                const query = searchInput.value.trim().toLowerCase();
-                let html = '';
-
-                if (query) {
-                    let matchesFound = false;
-
-                    for (const word of WORDS) {
-                        if (word.toLowerCase().startsWith(query)) {
-                            html += `<a href="${word}.html"><li>${word}</li></a>`;
-                            matchesFound = true;
-                        }
-                    }
-
-                    if (!matchesFound) {
-                        html = '<li class="no-match-item">Match not found!</li>';
-                    }
-
-                    suggestionsList.innerHTML = html;
-                    suggestionsPanel.style.display = 'block';
-                } else {
-                    // Instantly hide suggestions layout tree clear state when empty
-                    suggestionsList.innerHTML = '';
-                    suggestionsPanel.style.display = 'none';
-                }
-            });
-        });
-    </script>
+    <!-- Embedded Dynamic Live Search Script Mechanics Link -->
+    <script src="./auto.js"></script>
 </body>
 </html>
