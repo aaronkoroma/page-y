@@ -4,27 +4,335 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="hello.jpeg">
-    <title>Binary Portal - aaron</title>
-    <script src="./words.js"></script>
-    <link rel="stylesheet" href="./search.css">
+    <title>Binary Portal - Search & Information</title>
+    <style>
+        /* ==========================================================================
+           1. Global Typography & Core Resets (php.net System Stack)
+           ========================================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Fira Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            color: #333333;
+            line-height: 1.5;
+        }
+
+        /* ==========================================================================
+           2. Top Navigation Bar (Classic Documentation Utility Header)
+           ========================================================================== */
+        header {
+            background-color: #4f5b93; /* PHP Slate Blue */
+            color: #ffffff;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 3px solid #3c456f;
+        }
+
+        .brand-zone {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-zone img {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+
+        #product {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .search-box-container {
+            width: 40%;
+            max-width: 400px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 6px 12px;
+            font-size: 14px;
+            background-color: #3c456f;
+            border: 1px solid #2c3352;
+            border-radius: 3px;
+            color: #ffffff;
+            outline: none;
+            transition: background-color 0.15s ease;
+        }
+
+        input[type="text"]:focus {
+            background-color: #ffffff;
+            color: #111111;
+            border-color: #4f5b93;
+        }
+
+        input[type="text"]::placeholder {
+            color: #b0b7d6;
+        }
+
+        /* ==========================================================================
+           3. Core Content Architecture (Two-Column Layout)
+           ========================================================================== */
+        .layout-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            gap: 30px;
+        }
+
+        /* Main Workspace Pane */
+        main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* Live Suggestions Overlay Panel */
+        .suggestions-panel {
+            background-color: #f0f0f0;
+            border: 1px solid #d0d0d0;
+            border-radius: 3px;
+            margin-bottom: 25px;
+            display: none; /* Controlled dynamically by JavaScript */
+        }
+
+        .suggestions-panel h4 {
+            background-color: #e0e0e0;
+            padding: 6px 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #555555;
+            border-bottom: 1px solid #d0d0d0;
+            letter-spacing: 0.5px;
+        }
+
+        .suggestions-panel ul {
+            list-style: none;
+        }
+
+        .suggestions-panel ul a {
+            text-decoration: none;
+            color: #4f5b93;
+            display: block;
+        }
+
+        .suggestions-panel ul li {
+            padding: 8px 12px;
+            font-size: 14px;
+            border-bottom: 1px solid #e0e0e0;
+            font-family: monospace;
+        }
+
+        .suggestions-panel ul a:last-child li {
+            border-bottom: none;
+        }
+
+        .suggestions-panel ul li:hover {
+            background-color: #e4e6f2;
+            color: #2c3352;
+        }
+
+        .no-match-item {
+            color: #aa0000 !important;
+            font-style: italic;
+            font-family: sans-serif !important;
+        }
+
+        /* Technical Profile Plate */
+        .doc-section {
+            background-color: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 22px;
+            font-weight: 500;
+            color: #333333;
+            border-bottom: 1px solid #dddddd;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            font-size: 18px;
+            color: #4f5b93;
+            margin-bottom: 15px;
+        }
+
+        .profile-meta-grid {
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+        }
+
+        .profile-meta-grid img {
+            border: 1px solid #cccccc;
+            padding: 4px;
+            background-color: #ffffff;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .spec-list {
+            list-style: none;
+            width: 100%;
+        }
+
+        .spec-list li {
+            font-size: 14px;
+            padding: 8px 0;
+            border-bottom: 1px dashed #eeeeee;
+            display: flex;
+        }
+
+        .spec-list li:last-child {
+            border-bottom: none;
+        }
+
+        .spec-list li strong {
+            width: 140px;
+            color: #666666;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        /* Sidebar Pane (Documentation Context Block) */
+        aside {
+            width: 260px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-box {
+            background-color: #fdfdfd;
+            border: 1px solid #e8e8e8;
+            border-left: 4px solid #7a86b8;
+            padding: 15px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .sidebar-box h4 {
+            font-size: 13px;
+            color: #333333;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        #mnf {
+            font-size: 13px;
+            color: #4f5b93;
+            text-decoration: none;
+            line-height: 1.4;
+            display: inline-block;
+        }
+
+        #mnf:hover {
+            text-decoration: underline;
+        }
+
+        /* ==========================================================================
+           4. Responsive Web Design Layout Fixes (Mobile Collapsing Viewports)
+           ========================================================================== */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 12px;
+                padding: 12px;
+            }
+
+            .search-box-container {
+                width: 100%;
+                max-width: none;
+            }
+
+            .layout-container {
+                flex-direction: column;
+                padding: 12px;
+                gap: 20px;
+            }
+
+            aside {
+                width: 100%;
+            }
+
+            .profile-meta-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .profile-meta-grid img {
+                width: 100%;
+                max-width: 275px;
+                height: auto;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1 id="product">Binary Portal</h1>
-    <input type="text" id="input" placeholder="Search aaron...">
-    <ul></ul>
 
-    <h2>Basic Informations</h2>
-    <img src="./aaron.JPG" width="275" height="350">
-    <h3>Aaron Koroma</h3>
-    <ul>
-        <li>Born May 3, 2007.</li>
-        <li>Attends Sky Vision College.</li>
-        <li>Creator of a Live Search System called Binary Portal.</li>
-        <li>Networth: $ 7 Trillion.</li>
-        <li>Single at the moment.</li>
-        <li>Favourite Quote: God heals the wheels.</li>
-        <li>Contesting Quote: Knowledge is silver, imagination is bronze, and experience is gold. In experience we tends to name things known and unknown, our feelings and actions all included.</li>
-    </ul>
-    <script src="./auto.js"></script>
-</body>
-</html>
+    <!-- Header Navigation Utility Area -->
+    <header>
+        <div class="brand-zone">
+            <img src="hello.jpeg" alt="Portal Logo">
+            <span id="product">Binary Portal</span>
+        </div>
+        <div class="search-box-container">
+            <input type="text" id="input" autofocus placeholder="Search words (e.g. aaron)...">
+        </div>
+    </header>
+
+    <!-- Main Responsive Structural Layout Grid -->
+    <div class="layout-container">
+        
+        <!-- Center Workspace Panel -->
+        <main>
+            <!-- Dynamic Asynchronous Search Live Feedback Overlay -->
+            <div class="suggestions-panel" id="suggestionsPanel">
+                <h4>Search Matches</h4>
+                <ul id="suggestionsList"></ul>
+            </div>
+
+            <!-- Profile Overview Panel Block -->
+            <div class="doc-section">
+                <h2>Basic Information</h2>
+                <h3>System Developer Entry</h3>
+                
+                <div class="profile-meta-grid">
+                    <img src="./aaron.JPG" width="275" height="350" alt="Aaron Koroma">
+                    
+                    <ul class="spec-list">
+                        <li><strong>Identity Name:</strong> Aaron Koroma</li>
+                        <li><strong>Date of Birth:</strong> May 3, 2007</li>
+                        <li><strong>Institution:</strong> Sky Vision College</li>
+                        <li><strong>Project Role:</strong> Creator of Binary Portal Live Search System</li>
+                        <li><strong>Estimated Valuation:</strong> $7 Trillion</li>
+                        <li><strong>Relationship Matrix:</strong> Single at the moment</li>
+                        <li><strong>Core Philosophy:</strong> "God heals the wheels."</li>
+                        <li><strong>Contesting Axiom:</strong> "Knowledge is silver, imagination is bronze, and experience is gold. In experience we tend to name things known and unknown, our feelings and actions all included."</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+
+        <!-- Contextual Left/Right Documentation Sidebar -->
+        <aside>
+            <div class="sidebar-box">
+                <h4>System References</h4>
+                <a href="match.html" id="mnf">About no match found or search match diagnostics &rarr;</a>
+            </div>
+        </aside>
+
