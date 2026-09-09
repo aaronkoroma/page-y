@@ -5,34 +5,316 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="hello.jpeg">
     <title>Binary Portal</title>
-    <link rel="stylesheet" href="./search.css">
-    <script src="./words.js"></script>
-    <script src="./match.js"></script>
+    <style>
+        /* ==========================================================================
+           1. Global Typography & Core Resets (php.net System Stack)
+           ========================================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Fira Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            color: #333333;
+            line-height: 1.5;
+        }
+
+        /* ==========================================================================
+           2. Top Navigation Bar (Documentation Utility Header with #00bbff)
+           ========================================================================== */
+        header {
+            background-color: #00bbff;
+            color: #ffffff;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 3px solid #0099cc;
+        }
+
+        .brand-zone {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-zone img {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+
+        #product {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .search-box-container {
+            width: 40%;
+            max-width: 400px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 6px 12px;
+            font-size: 14px;
+            background-color: rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.25);
+            border-radius: 3px;
+            color: #ffffff;
+            outline: none;
+            transition: all 0.15s ease;
+        }
+
+        input[type="text"]:focus {
+            background-color: #ffffff;
+            color: #111111;
+            border-color: #00bbff;
+            box-shadow: 0 0 0 3px rgba(0, 187, 255, 0.25);
+        }
+
+        input[type="text"]::placeholder {
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        /* ==========================================================================
+           3. Core Content Architecture (Two-Column Layout)
+           ========================================================================== */
+        .layout-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            gap: 30px;
+        }
+
+        /* Main Content Viewport */
+        main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* Live Suggestions Result Container */
+        .suggestions-panel {
+            background-color: #fdfdfd;
+            border: 1px solid #d0d0d0;
+            border-radius: 3px;
+            margin-bottom: 25px;
+            display: none; /* Controlled dynamically via active JS query states */
+        }
+
+        .suggestions-panel h4 {
+            background-color: #e0e0e0;
+            padding: 6px 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #555555;
+            border-bottom: 1px solid #d0d0d0;
+            letter-spacing: 0.5px;
+        }
+
+        .suggestions-panel ul {
+            list-style: none;
+        }
+
+        .suggestions-panel ul a {
+            text-decoration: none;
+            color: #00bbff;
+            display: block;
+        }
+
+        .suggestions-panel ul li {
+            padding: 10px 12px;
+            font-size: 14px;
+            border-bottom: 1px solid #e8e8e8;
+            font-family: monospace;
+            color: #333333;
+        }
+
+        .suggestions-panel ul a:last-child li {
+            border-bottom: none;
+        }
+
+        .suggestions-panel ul li:hover {
+            background-color: rgba(0, 187, 255, 0.08);
+            color: #0099cc;
+        }
+
+        .no-match-item {
+            color: #aa0000 !important;
+            font-style: italic;
+            font-family: sans-serif !important;
+        }
+
+        /* Welcome Introduction Box */
+        .doc-section {
+            background-color: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 22px;
+            font-weight: 500;
+            color: #333333;
+            border-bottom: 1px solid #dddddd;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 14px;
+            color: #666666;
+        }
+
+        /* Sidebar Pane */
+        aside {
+            width: 260px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-box {
+            background-color: #fdfdfd;
+            border: 1px solid #e8e8e8;
+            border-left: 4px solid #00bbff;
+            padding: 15px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .sidebar-box h4 {
+            font-size: 13px;
+            color: #333333;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        #mnf {
+            font-size: 13px;
+            color: #00bbff;
+            text-decoration: none;
+            line-height: 1.4;
+            display: inline-block;
+        }
+
+        #mnf:hover {
+            text-decoration: underline;
+        }
+
+        /* ==========================================================================
+           4. Responsive Web Design Layout Fixes (Mobile Collapsing Viewports)
+           ========================================================================== */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 12px;
+                padding: 12px;
+            }
+
+            .search-box-container {
+                width: 100%;
+                max-width: none;
+            }
+
+            .layout-container {
+                flex-direction: column;
+                padding: 12px;
+                gap: 20px;
+            }
+
+            aside {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-    <center><img src="hello.jpeg" id="logo"></center>
-    <h1 id="product">Binary Portal</h1>
-    <input type="text" autofocus placeholder="Search aaron...">
-    <br><br>
-    <a href="match.html" id="mnf">About no match found or search match</a>
-    <ul></ul>
 
+    <!-- Header Navigation Utility Area -->
+    <header>
+        <div class="brand-zone">
+            <img src="hello.jpeg" alt="Portal Logo">
+            <span id="product">Binary Portal</span>
+        </div>
+        <div class="search-box-container">
+            <input type="text" id="input" autofocus placeholder="Search aaron...">
+        </div>
+    </header>
+
+    <!-- Main Responsive Layout Grid -->
+    <div class="layout-container">
+        
+        <!-- Center Primary Panel -->
+        <main>
+            <!-- Dynamic Asynchronous Search Live Feedback Overlay -->
+            <div class="suggestions-panel" id="suggestionsPanel">
+                <h4>Search Matches</h4>
+                <ul id="suggestionsList"></ul>
+            </div>
+
+            <!-- Dashboard Welcome Plate -->
+            <div class="doc-section">
+                <h2>Welcome to Binary Portal</h2>
+                <p>Use the global documentation search engine in the header navigation frame above to look up indexed pages and profile logs instantly.</p>
+            </div>
+        </main>
+
+        <!-- Contextual References Sidebar -->
+        <aside>
+            <div class="sidebar-box">
+                <h4>System References</h4>
+                <a href="match.html" id="mnf">About no match found or search match</a>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Fallback structural data definitions array if your external words.js asset is missing -->
     <script>
-        let input = document.querySelector('input');
-        input.addEventListener('keyup', function(e){
-            let html = '';  
-            if(input.value){
-                for(word of WORDS){
-                    if(word.startsWith(input.value)){
-                        html += `<a href="${word}.html"><li>${word}</li></a>`; 
+        if (typeof WORDS === 'undefined') {
+            var WORDS = ["aaron", "alpha", "binary", "boolean", "compiler", "data", "function", "portal"];
+        }
+    </script>
+    
+    <!-- Embedded Dynamic Live Search Script Mechanics -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const searchInput = document.getElementById('input');
+            const suggestionsPanel = document.getElementById('suggestionsPanel');
+            const suggestionsList = document.getElementById('suggestionsList');
+
+            searchInput.addEventListener('keyup', function() {
+                const query = searchInput.value.trim().toLowerCase();
+                let html = '';
+
+                if (query) {
+                    let matchesFound = false;
+
+                    for (const word of WORDS) {
+                        if (word.toLowerCase().startsWith(query)) {
+                            html += `<a href="${word}.html"><li>${word}</li></a>`;
+                            matchesFound = true;
+                        }
                     }
+
+                    if (!matchesFound) {
+                        html = '<li class="no-match-item">Match not found!</li>';
+                    }
+
+                    suggestionsList.innerHTML = html;
+                    suggestionsPanel.style.display = 'block';
+                } else {
+                    // Instantly hide suggestions layout tree clear state when empty
+                    suggestionsList.innerHTML = '';
+                    suggestionsPanel.style.display = 'none';
                 }
-            }
-            else{
-                html += '<li>Match not found!</li>';
-            }
-            document.querySelector('ul').innerHTML = html;
-            e.preventDefault();
+            });
         });
     </script>
 </body>
