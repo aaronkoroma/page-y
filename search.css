@@ -74,12 +74,14 @@ input[type="text"] {
 input[type="text"]:focus {
     background-color: #ffffff;
     color: #111111;
+    font-size: 19px;
     border-color: #00bbff;
     box-shadow: 0 0 0 3px rgba(0, 187, 255, 0.25);
 }
 
 input[type="text"]::placeholder {
-    color: #333;
+    color: #808080;
+   font-size: 19px;
 }
 
 /* ==========================================================================
