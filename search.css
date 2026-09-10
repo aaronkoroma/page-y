@@ -62,8 +62,8 @@ header {
 input[type="text"] {
     width: 100%;
     padding: 6px 12px;
-    font-size: 14px;
-    background-color: rgba(0, 0, 0, 0.15);
+    font-size: 19px;
+    background-color: #ffffff;
     border: 1px solid rgba(0, 0, 0, 0.25);
     border-radius: 3px;
     color: #ffffff;
